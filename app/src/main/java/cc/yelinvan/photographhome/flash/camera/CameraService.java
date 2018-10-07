@@ -1,7 +1,11 @@
 package cc.yelinvan.photographhome.flash.camera;
 
 import android.app.AlertDialog;
+import android.app.Notification;
 import android.app.Notification.Builder;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,6 +15,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.mtp.MtpDevice;
@@ -155,7 +160,8 @@ public class CameraService extends AlltuuCameraListener {
         super.onCreate();
         this.context = this;
         Log.d(TAG, "onCreate");
-        startForeground(1017, new Builder(getApplicationContext()).setContentText("喔图闪传正在运行").setSmallIcon(R.mipmap.push_alltuu).build());
+        startForeground(1017, new Builder(getApplicationContext()).setContentText("喔图闪传正在运行")
+                .setSmallIcon(R.mipmap.push_alltuu).build());
         this.mySharedPrefences = getSharedPreferences(API.SP_NORMAL, 0);
 
 
@@ -207,7 +213,7 @@ public class CameraService extends AlltuuCameraListener {
     }
 
     private void disconnectCameraDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext(), R.style.Theme.AppCompat.Light.Dialog.Alert);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext(), R.style.theme_AppCompat_Light_Dialog_Alert);
         builder.setTitle("已与相机断开连接");
         if ("ALLTUU_S1".equals(DeviceUtils.getModel())) {
             builder.setMessage(R.string.flash_upload_list_text3);
@@ -224,7 +230,7 @@ public class CameraService extends AlltuuCameraListener {
     }
 
     private void showBaseDialog(String msg) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext(), R.style.Theme.AppCompat.Light.Dialog.Alert);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext(), R.style.theme_AppCompat_Light_Dialog_Alert);
         builder.setTitle("温馨提示");
         builder.setMessage(msg);
         builder.setNegativeButton("我知道了", new OnClickListener() {
@@ -238,6 +244,21 @@ public class CameraService extends AlltuuCameraListener {
 
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand");
+
+        String CHANNEL_ONE_ID = "com.kjtech.app.N1";
+        String CHANNEL_ONE_NAME = "Channel One";
+        NotificationChannel notificationChannel = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            notificationChannel = new NotificationChannel(CHANNEL_ONE_ID,
+                    CHANNEL_ONE_NAME, NotificationManager.IMPORTANCE_HIGH);
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.setShowBadge(true);
+            notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            manager.createNotificationChannel(notificationChannel);
+        }
+
         this.intent = intent;
         connectCamera();
         return super.onStartCommand(intent, flags, startId);
@@ -529,7 +550,7 @@ public class CameraService extends AlltuuCameraListener {
 
 
     private void showConfirmDialog(long fileSize, String filePath, final int objectHandle, String actId, String sepId) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext(), R.style.Theme.AppCompat.Light.Dialog.Alert);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext(), R.style.theme_AppCompat_Light_Dialog_Alert);
         builder.setTitle("温馨提示");
         builder.setMessage("此视频大小为" + ConvertUtils.byte2FitMemorySize(fileSize) + "，需要花费" + (((float) this.usedCent) / 100.0f) + "元，您当前余额为" + (((float) this.balance) / 100.0f) + "元，上传成功之后会自动扣费，确认上传吗？");
         builder.setNegativeButton("放弃上传", new OnClickListener() {
@@ -559,7 +580,7 @@ public class CameraService extends AlltuuCameraListener {
     }
 
     private void showRechargeMoneyDialog(long fileSize, String filePath, int objectHandle) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext(), R.style.Theme.AppCompat.Light.Dialog.Alert);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext(), R.style.theme_AppCompat_Light_Dialog_Alert);
         builder.setTitle("温馨提示");
         builder.setMessage("此视频大小为" + ConvertUtils.byte2FitMemorySize(fileSize) + "，需要花费" + (((float) this.usedCent) / 100.0f) + "元，您当前余额为" + (((float) this.balance) / 100.0f) + "元，请充值后再重新上传视频");
         builder.setNegativeButton("好的", new OnClickListener() {

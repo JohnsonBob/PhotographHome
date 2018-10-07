@@ -17,7 +17,7 @@ import java.util.Map.Entry;
 
 import cc.yelinvan.photographhome.rycusboss.ptp.Camera.CameraListener;
 
-public class PtpUsbService implements PtpService {
+    public class PtpUsbService implements PtpService {
     private static final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
     private final String TAG = PtpUsbService.class.getSimpleName();
     private PtpCamera camera;
@@ -28,8 +28,8 @@ public class PtpUsbService implements PtpService {
             if (PtpUsbService.ACTION_USB_PERMISSION.equals(intent.getAction())) {
                 PtpUsbService.this.unregisterPermissionReceiver(context);
                 synchronized (this) {
-                    //UsbDevice device = (UsbDevice) intent.getParcelableExtra(d.n);
-                    UsbDevice device =null;
+                    UsbDevice device = (UsbDevice) intent.getParcelableExtra("device");
+                    //UsbDevice device =null;
                     if (intent.getBooleanExtra("permission", false)) {
                         PtpUsbService.this.connect(context, device);
                     } else {
@@ -69,8 +69,8 @@ public class PtpUsbService implements PtpService {
                 return;
             }
         }
-        //UsbDevice device = (UsbDevice) intent.getParcelableExtra(d.n);
-        UsbDevice device = null;
+        UsbDevice device = (UsbDevice) intent.getParcelableExtra("device");
+        //UsbDevice device = null;
         if (device != null) {
             connect(context, device);
             return;
@@ -79,6 +79,7 @@ public class PtpUsbService implements PtpService {
         if (device != null) {
             this.listener.onPermissonAuth(0);
             registerPermissionReceiver(context);
+            connect(context, device);
             this.usbManager.requestPermission(device, PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0));
             return;
         }
@@ -141,7 +142,9 @@ public class PtpUsbService implements PtpService {
                 }
                 if (!(in == null || out == null)) {
                     if (device.getVendorId() == PtpConstants.CanonVendorId) {
-                        this.camera = new EosCamera(new PtpUsbConnection(this.usbManager.openDevice(device), in, out, device.getVendorId(), device.getProductId(), device), this.listener, new WorkerNotifier(context));
+                        this.camera = new EosCamera(new PtpUsbConnection(
+                                this.usbManager.openDevice(device), in, out, device.getVendorId(), device.getProductId(), device),
+                                this.listener, new WorkerNotifier(context));
                     } else if (device.getVendorId() == PtpConstants.NikonVendorId) {
                         this.camera = new NikonCamera(new PtpUsbConnection(this.usbManager.openDevice(device), in, out, device.getVendorId(), device.getProductId(), device), this.listener, new WorkerNotifier(context));
                     } else if (device.getVendorId() == PtpConstants.SONYVendorId) {

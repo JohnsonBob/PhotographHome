@@ -1,6 +1,5 @@
 package cc.yelinvan.photographhome.uploadutils;
 
-import android.alltuu.com.newalltuuapp.common.utils.AlltuuUtils;
 
 import com.blankj.utilcode.util.ToastUtils;
 
@@ -20,7 +19,6 @@ public class AlbumPhotoUploadState {
     public static final int UPLOAD_SUCCESS = 0;
 
     public static void showStateCodeMsg(int stateCode) {
-        AlltuuUtils.AlltuuLoggerD(TAG, "stateCode:" + stateCode);
         switch (stateCode) {
             case -9:
                 ToastUtils.showShort((CharSequence) "确认上传时解析数据失败，我们会在所有照片上传完之后，重新上传失败的照片");

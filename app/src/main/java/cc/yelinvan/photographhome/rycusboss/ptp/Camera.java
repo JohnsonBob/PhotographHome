@@ -105,6 +105,33 @@ public interface Camera {
         public static final int ShootingMode = 5;
         public static final int ShutterSpeed = 1;
         public static final int Whitebalance = 4;
+
+
+        public static final int EosShutterSpeed = 53506;
+        public static final int EosApertureValue = 53505;
+        public static final int EosIsoSpeed = 53507;
+        public static final int EosWhitebalance = 53513;
+        public static final int EosShootingMode = 53509;
+        public static final int WhiteBalance = 20485;
+        public static final int EosAvailableShots = 53531;
+        public static final int EosColorTemperature = 53514;
+
+        public static final int EosPictureStyle = 53520;
+        public static final int EosMeteringMode = 53511;
+        public static final int EosExposureCompensation = 53508;
+        public static final int NikonEnableAfAreaPoint = 53389;
+        public static final int NikonShutterSpeed = 53504;
+        public static final int ExposureTime = 20493;
+
+        public static final int FNumber = 20487;
+        public static final int ExposureIndex = 20495;
+        public static final int NikonWbColorTemp = 53278;
+        public static final int ExposureProgramMode = 20494;
+        public static final int NikonExposureIndicateStatus = 53681;
+        public static final int ExposureBiasCompensation = 20496;
+
+
+
     }
 
     public interface WorkerListener {

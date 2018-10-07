@@ -4,8 +4,10 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "cc.yelinvan.photographhome"
-        minSdkVersion 22
+        minSdkVersion
+
         targetSdkVersion 27
+        minSdkVersion 19
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -19,9 +21,12 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    api project(path: ':VolleyPlus')
+    //implementation(name: 'support-v4-27.1.1', ext: 'aar')
+    //implementation fileTree(dir: 'libs', include: ['*.aar'])
     //noinspection GradleCompatible
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:appcompat-v7:26+'
+    //implementation files('libs/appcompat-v7-27.1.1-sources.jar')
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
@@ -32,8 +37,9 @@ dependencies {
     implementation 'com.aliyun.dpa:oss-android-sdk:2.4.5'
     implementation 'com.squareup.okhttp3:okhttp:3.4.1'
     implementation 'com.squareup.okio:okio:1.9.0'
-    implementation project(path: ':VolleyPlus')
+
     implementation 'com.facebook.react:react-native:0.20.+'
     implementation group: 'com.drewnoakes', name: 'metadata-extractor', version: '2.11.0'
     implementation group: 'org.greenrobot', name: 'eventbus', version: '3.1.1'
+    implementation 'com.nimbusds:nimbus-jose-jwt:4.35'
 }

@@ -20,7 +20,9 @@ apply plugin: 'com.jfrog.bintray'
 
 dependencies {
     implementation 'com.google.code.gson:gson:2.8.2'
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+    //implementation 'com.android.support:appcompat-v7:27.1.1'
+   // implementation 'com.android.support:support-v4:27.1.1'
+    implementation 'com.android.support:appcompat-v7:26+'
 }
 
 android {
@@ -67,6 +69,6 @@ android {
         archives androidJavadocsJar
     }
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 19
     }
 }

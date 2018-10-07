@@ -1,21 +1,22 @@
 package cc.yelinvan.photographhome.rycusboss.ptp;
 
-import android.alltuu.com.newalltuuapp.rycusboss.ptp.PtpConstants.Operation;
-import android.alltuu.com.newalltuuapp.rycusboss.ptp.PtpConstants.Product;
-import android.alltuu.com.newalltuuapp.rycusboss.ptp.commands.GetDevicePropDescCommand;
-import android.alltuu.com.newalltuuapp.rycusboss.ptp.commands.InitiateCaptureCommand;
-import android.alltuu.com.newalltuuapp.rycusboss.ptp.commands.RetrieveAddedObjectInfoAction;
-import android.alltuu.com.newalltuuapp.rycusboss.ptp.commands.SimpleCommand;
-import android.alltuu.com.newalltuuapp.rycusboss.ptp.commands.nikon.NikonAfDriveCommand;
-import android.alltuu.com.newalltuuapp.rycusboss.ptp.commands.nikon.NikonCloseSessionAction;
-import android.alltuu.com.newalltuuapp.rycusboss.ptp.commands.nikon.NikonEventCheckCommand;
-import android.alltuu.com.newalltuuapp.rycusboss.ptp.commands.nikon.NikonGetLiveViewImageAction;
-import android.alltuu.com.newalltuuapp.rycusboss.ptp.commands.nikon.NikonGetLiveViewImageCommand;
-import android.alltuu.com.newalltuuapp.rycusboss.ptp.commands.nikon.NikonOpenSessionAction;
-import android.alltuu.com.newalltuuapp.rycusboss.ptp.commands.nikon.NikonStartLiveViewAction;
-import android.alltuu.com.newalltuuapp.rycusboss.ptp.commands.nikon.NikonStopLiveViewAction;
-import android.alltuu.com.newalltuuapp.rycusboss.ptp.model.DevicePropDesc;
-import android.alltuu.com.newalltuuapp.rycusboss.ptp.model.LiveViewData;
+import cc.yelinvan.photographhome.flash.been.UploadPhotoInfoBeen;
+import cc.yelinvan.photographhome.rycusboss.ptp.PtpConstants.Operation;
+import cc.yelinvan.photographhome.rycusboss.ptp.PtpConstants.Product;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.GetDevicePropDescCommand;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.InitiateCaptureCommand;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.RetrieveAddedObjectInfoAction;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.SimpleCommand;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.nikon.NikonAfDriveCommand;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.nikon.NikonCloseSessionAction;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.nikon.NikonEventCheckCommand;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.nikon.NikonGetLiveViewImageAction;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.nikon.NikonGetLiveViewImageCommand;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.nikon.NikonOpenSessionAction;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.nikon.NikonStartLiveViewAction;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.nikon.NikonStopLiveViewAction;
+import cc.yelinvan.photographhome.rycusboss.ptp.model.DevicePropDesc;
+import cc.yelinvan.photographhome.rycusboss.ptp.model.LiveViewData;
 
 import com.drew.metadata.exif.makernotes.PanasonicMakernoteDirectory;
 
@@ -227,6 +228,11 @@ public class NikonCamera extends PtpCamera {
             default:
                 return true;
         }
+    }
+
+    @Override
+    public void retrieveImage(RetrieveImageListener retrieveImageListener, int i, int i2, int i3, String str, String str2, UploadPhotoInfoBeen uploadPhotoInfoBeen) {
+
     }
 
     public Integer getVendorId() {

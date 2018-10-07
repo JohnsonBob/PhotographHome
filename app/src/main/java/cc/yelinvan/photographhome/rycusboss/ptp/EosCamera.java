@@ -1,18 +1,19 @@
 package cc.yelinvan.photographhome.rycusboss.ptp;
 
-import android.alltuu.com.newalltuuapp.rycusboss.ptp.PtpConstants.Operation;
-import android.alltuu.com.newalltuuapp.rycusboss.ptp.commands.SimpleCommand;
-import android.alltuu.com.newalltuuapp.rycusboss.ptp.commands.eos.EosEventCheckCommand;
-import android.alltuu.com.newalltuuapp.rycusboss.ptp.commands.eos.EosGetLiveViewPictureCommand;
-import android.alltuu.com.newalltuuapp.rycusboss.ptp.commands.eos.EosOpenSessionAction;
-import android.alltuu.com.newalltuuapp.rycusboss.ptp.commands.eos.EosSetLiveViewAction;
-import android.alltuu.com.newalltuuapp.rycusboss.ptp.commands.eos.EosSetPropertyCommand;
-import android.alltuu.com.newalltuuapp.rycusboss.ptp.commands.eos.EosTakePictureCommand;
-import android.alltuu.com.newalltuuapp.rycusboss.ptp.model.LiveViewData;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import cc.yelinvan.photographhome.flash.been.UploadPhotoInfoBeen;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.eos.EosEventCheckCommand;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.eos.EosGetLiveViewPictureCommand;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.eos.EosOpenSessionAction;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.eos.EosSetLiveViewAction;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.eos.EosSetPropertyCommand;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.eos.EosTakePictureCommand;
+import cc.yelinvan.photographhome.rycusboss.ptp.model.LiveViewData;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.SimpleCommand;
 
 public class EosCamera extends PtpCamera {
     public EosCamera(PtpUsbConnection connection, CameraListener listener, WorkerListener workerListener) {
@@ -32,16 +33,16 @@ public class EosCamera extends PtpCamera {
     }
 
     protected void onOperationCodesReceived(Set<Integer> operations) {
-        if (operations.contains(Integer.valueOf(Operation.EosGetLiveViewPicture))) {
+        if (operations.contains(Integer.valueOf(PtpConstants.Operation.EosGetLiveViewPicture))) {
             this.liveViewSupported = true;
         }
-        if (operations.contains(Integer.valueOf(Operation.EosBulbStart)) && operations.contains(Integer.valueOf(Operation.EosBulbEnd))) {
+        if (operations.contains(Integer.valueOf(PtpConstants.Operation.EosBulbStart)) && operations.contains(Integer.valueOf(PtpConstants.Operation.EosBulbEnd))) {
             this.bulbSupported = true;
         }
-        if (operations.contains(Integer.valueOf(Operation.EosDriveLens))) {
+        if (operations.contains(Integer.valueOf(PtpConstants.Operation.EosDriveLens))) {
             this.driveLensSupported = true;
         }
-        if (!operations.contains(Integer.valueOf(Operation.EosRemoteReleaseOn)) || operations.contains(Integer.valueOf(Operation.EosRemoteReleaseOff))) {
+        if (!operations.contains(Integer.valueOf(PtpConstants.Operation.EosRemoteReleaseOn)) || operations.contains(Integer.valueOf(PtpConstants.Operation.EosRemoteReleaseOff))) {
         }
     }
 
@@ -62,7 +63,7 @@ public class EosCamera extends PtpCamera {
 
     public void capture() {
         if (isBulbCurrentShutterSpeed()) {
-            this.queue.add(new SimpleCommand(this, this.cameraIsCapturing ? Operation.EosBulbEnd : Operation.EosBulbStart));
+            this.queue.add(new SimpleCommand(this, this.cameraIsCapturing ? PtpConstants.Operation.EosBulbEnd : PtpConstants.Operation.EosBulbStart));
         } else {
             this.queue.add(new EosTakePictureCommand(this));
         }
@@ -105,7 +106,7 @@ public class EosCamera extends PtpCamera {
                     value |= 1;
                     break;
             }
-            this.queue.add(new SimpleCommand(this, Operation.EosDriveLens, value));
+            this.queue.add(new SimpleCommand(this, PtpConstants.Operation.EosDriveLens, value));
         }
     }
 
@@ -149,6 +150,11 @@ public class EosCamera extends PtpCamera {
             default:
                 return true;
         }
+    }
+
+    @Override
+    public void retrieveImage(RetrieveImageListener retrieveImageListener, int i, int i2, int i3, String str, String str2, UploadPhotoInfoBeen uploadPhotoInfoBeen) {
+
     }
 
     public Integer getVendorId() {
