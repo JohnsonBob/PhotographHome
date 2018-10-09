@@ -1,13 +1,14 @@
 package cc.yelinvan.photographhome.rycusboss.ptp;
 
-import cc.yelinvan.photographhome.R;
-import cc.yelinvan.photographhome.rycusboss.util.NotificationIds;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.app.NotificationCompat.Builder;
+
+import cc.yelinvan.photographhome.R;
+import cc.yelinvan.photographhome.rycusboss.util.NotificationIds;
 
 /**
  * 通知管理 2018年10月6日21:58:38
@@ -19,7 +20,7 @@ public class WorkerNotifier implements Camera.WorkerListener {
 
     public WorkerNotifier(Context context) {
         this.notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
-        this.notification = new Builder(context).setContentText("").setWhen(System.currentTimeMillis()).setContentTitle("").setSmallIcon(R.mipmap.ic_launcher).build();
+        this.notification = new Builder(context).setContentText("").setWhen(System.currentTimeMillis()).setContentTitle("").setSmallIcon(R.mipmap.push_alltuu).build();
     }
 
     public void onWorkerStarted() {
@@ -30,8 +31,8 @@ public class WorkerNotifier implements Camera.WorkerListener {
 
     public void onWorkerEnded() {
         this.notificationManager.cancel(this.uniqueId);
-        String CHANNEL_ONE_ID = "com.kjtech.app.N1";
-        String CHANNEL_ONE_NAME = "Channel One";
+        String CHANNEL_ONE_ID = "cc.yelinvan.photographhome";
+        String CHANNEL_ONE_NAME = "cc.yelinvan.photographhome";
 
         NotificationChannel notificationChannel = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {

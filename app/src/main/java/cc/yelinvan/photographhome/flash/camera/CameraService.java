@@ -2,10 +2,8 @@ package cc.yelinvan.photographhome.flash.camera;
 
 import android.app.AlertDialog;
 import android.app.Notification;
-import android.app.Notification.Builder;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,6 +18,7 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.mtp.MtpDevice;
 import android.mtp.MtpObjectInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Message;
@@ -160,8 +159,34 @@ public class CameraService extends AlltuuCameraListener {
         super.onCreate();
         this.context = this;
         Log.d(TAG, "onCreate");
-        startForeground(1017, new Builder(getApplicationContext()).setContentText("喔图闪传正在运行")
-                .setSmallIcon(R.mipmap.push_alltuu).build());
+
+        String CHANNEL_ONE_ID = "cc.yelinvan.photographhome";
+        String CHANNEL_ONE_NAME = "cc.yelinvan.photographhome";
+        NotificationChannel notificationChannel = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationChannel = new NotificationChannel(CHANNEL_ONE_ID,
+                    CHANNEL_ONE_NAME, NotificationManager.IMPORTANCE_HIGH);
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.setShowBadge(true);
+            notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            manager.createNotificationChannel(notificationChannel);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForeground(1017, new Notification.Builder(getApplicationContext())
+                    .setChannelId(CHANNEL_ONE_ID)
+                    .setContentText("摄影专家正在运行")
+                    .setSmallIcon(R.mipmap.push_alltuu)
+                    .build());
+        }else {
+            startForeground(1017, new Notification.Builder(getApplicationContext())
+                    .setContentText("摄影专家正在运行")
+                    .setSmallIcon(R.mipmap.push_alltuu)
+                    .build());
+        }
+
         this.mySharedPrefences = getSharedPreferences(API.SP_NORMAL, 0);
 
 
@@ -245,19 +270,7 @@ public class CameraService extends AlltuuCameraListener {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand");
 
-        String CHANNEL_ONE_ID = "com.kjtech.app.N1";
-        String CHANNEL_ONE_NAME = "Channel One";
-        NotificationChannel notificationChannel = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            notificationChannel = new NotificationChannel(CHANNEL_ONE_ID,
-                    CHANNEL_ONE_NAME, NotificationManager.IMPORTANCE_HIGH);
-            notificationChannel.enableLights(true);
-            notificationChannel.setLightColor(Color.RED);
-            notificationChannel.setShowBadge(true);
-            notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
-            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            manager.createNotificationChannel(notificationChannel);
-        }
+
 
         this.intent = intent;
         connectCamera();
