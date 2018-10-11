@@ -1,25 +1,5 @@
 package cc.yelinvan.photographhome.rycusboss.ptp;
 
-import cc.yelinvan.photographhome.flash.been.UploadPhotoInfoBeen;
-import cc.yelinvan.photographhome.utils.AppConfig;
-import cc.yelinvan.photographhome.rycusboss.ptp.PtpConstants.ObjectFormat;
-import cc.yelinvan.photographhome.rycusboss.ptp.PtpConstants.Product;
-import cc.yelinvan.photographhome.rycusboss.ptp.commands.CloseSessionCommand;
-import cc.yelinvan.photographhome.rycusboss.ptp.commands.Command;
-import cc.yelinvan.photographhome.rycusboss.ptp.commands.GetDeviceInfoCommand;
-import cc.yelinvan.photographhome.rycusboss.ptp.commands.GetDevicePropValueCommand;
-import cc.yelinvan.photographhome.rycusboss.ptp.commands.GetObjectHandlesCommand;
-import cc.yelinvan.photographhome.rycusboss.ptp.commands.GetStorageInfosAction;
-import cc.yelinvan.photographhome.rycusboss.ptp.commands.InitiateCaptureCommand;
-import cc.yelinvan.photographhome.rycusboss.ptp.commands.OpenSessionCommand;
-import cc.yelinvan.photographhome.rycusboss.ptp.commands.RetrieveImageAction;
-import cc.yelinvan.photographhome.rycusboss.ptp.commands.RetrieveImageInfoAction;
-import cc.yelinvan.photographhome.rycusboss.ptp.commands.RetrievePictureAction;
-import cc.yelinvan.photographhome.rycusboss.ptp.commands.SetDevicePropValueCommand;
-import cc.yelinvan.photographhome.rycusboss.ptp.model.DeviceInfo;
-import cc.yelinvan.photographhome.rycusboss.ptp.model.DevicePropDesc;
-import cc.yelinvan.photographhome.rycusboss.ptp.model.LiveViewData;
-import cc.yelinvan.photographhome.rycusboss.ptp.model.ObjectInfo;
 import android.graphics.Bitmap;
 import android.hardware.usb.UsbRequest;
 import android.mtp.MtpDevice;
@@ -40,8 +20,28 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
-import cc.yelinvan.photographhome.rycusboss.ptp.PtpPropertyHelper;
+import cc.yelinvan.photographhome.flash.been.UploadPhotoInfoBeen;
+import cc.yelinvan.photographhome.rycusboss.ptp.PtpConstants.ObjectFormat;
+import cc.yelinvan.photographhome.rycusboss.ptp.PtpConstants.Product;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.CloseSessionCommand;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.Command;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.GetDeviceInfoCommand;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.GetDevicePropValueCommand;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.GetObjectHandlesCommand;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.GetStorageInfosAction;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.InitiateCaptureCommand;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.OpenSessionCommand;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.RetrieveImageAction;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.RetrieveImageInfoAction;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.RetrievePictureAction;
+import cc.yelinvan.photographhome.rycusboss.ptp.commands.SetDevicePropValueCommand;
+import cc.yelinvan.photographhome.rycusboss.ptp.model.DeviceInfo;
+import cc.yelinvan.photographhome.rycusboss.ptp.model.DevicePropDesc;
+import cc.yelinvan.photographhome.rycusboss.ptp.model.LiveViewData;
+import cc.yelinvan.photographhome.rycusboss.ptp.model.ObjectInfo;
+import cc.yelinvan.photographhome.utils.AppConfig;
 
 import static cc.yelinvan.photographhome.rycusboss.ptp.PtpConstants.Property.NikonApplicationMode;
 
@@ -100,8 +100,8 @@ public abstract class PtpCamera implements Camera {
         private int maxPacketInSize;
         private int maxPacketOutSize;
         private UsbRequest r1;
-        private UsbRequest r2;
         private UsbRequest r3;
+        private UsbRequest r2;
         private ByteBuffer smallIn;
         public boolean stop;
 
@@ -113,9 +113,129 @@ public abstract class PtpCamera implements Camera {
             this.bigInSize = 16384;
             this.fullInSize = 16384;
         }
-        public void run() {
 
-//            throw new UnsupportedOperationException("Method not decompiled: android.alltuu.com.newalltuuapp.rycusboss.ptp.PtpCamera.WorkerThread.run():void");
+        public void run() {
+            WorkerThread workerThread = this;
+            int r4 = 65535;
+            int r6 = 16384;
+            workerThread.notifyWorkStarted();
+            PtpCamera ptpCamera = PtpCamera.this;
+            PtpUsbConnection ptpUsbConnection = ptpCamera.connection;
+            workerThread.maxPacketOutSize = ptpUsbConnection.getMaxPacketOutSize();
+            workerThread.maxPacketInSize = ptpUsbConnection.getMaxPacketInSize();
+            synchronized(workerThread){
+                if (workerThread.maxPacketOutSize <= 0){
+                    String r44 = "Usb initialization error: out size invalid %d";
+                    Object[] r55 = new Object[1];
+                    r6 = java.lang.Integer.valueOf(workerThread.maxPacketOutSize);
+                    r55[0] = r6;
+                    String r444 = java.lang.String.format(r44, r55);
+                    ptpCamera.onUsbError(r444);
+                }
+                if (workerThread.maxPacketOutSize <= r4) {
+                    if (workerThread.maxPacketInSize <= 0) {
+                        String r44 = "usb initialization error: in size invalid %d";
+                        Object[] r55 = new java.lang.Object[1];
+                        r6 = java.lang.Integer.valueOf(workerThread.maxPacketInSize);
+                        r55[0] = r6;
+                        String r444 = java.lang.String.format(r44, r55);
+                        ptpCamera.onUsbError(r444);
+                        return;
+                    }
+                }
+                if (workerThread.maxPacketInSize <= r4){
+                    int r333 = java.lang.Math.max(workerThread.maxPacketInSize, workerThread.maxPacketOutSize);
+                    ByteBuffer byteBuffer = java.nio.ByteBuffer.allocate(r333);
+                    workerThread.smallIn = byteBuffer;
+                    ByteOrder byteOrder = java.nio.ByteOrder.LITTLE_ENDIAN;
+                    workerThread.smallIn.order(byteOrder);
+                    workerThread.bigIn1 = java.nio.ByteBuffer.allocate(r6);
+                    workerThread.bigIn1.order(byteOrder);
+                    workerThread.bigIn2 = java.nio.ByteBuffer.allocate(r6);
+                    workerThread.bigIn2.order(byteOrder);
+                    workerThread.bigIn3 = java.nio.ByteBuffer.allocate(r6);
+                    workerThread.bigIn3.order(byteOrder);
+                    workerThread.fullIn = java.nio.ByteBuffer.allocate(workerThread.fullInSize);
+                    workerThread.fullIn.order(byteOrder);
+                    workerThread.r1 = ptpUsbConnection.createInRequest();
+                    workerThread.r2 = ptpUsbConnection.createInRequest();
+                    workerThread.r3 = ptpUsbConnection.createInRequest();
+                    if (workerThread.r1 == null){
+                        workerThread.stop = true;
+                    }
+                }
+                if (workerThread.r2 == null){
+                    workerThread.stop = true;
+                }
+                PtpAction ptpAction = null;
+                if (workerThread.r3 != null){
+                    if (workerThread.stop == false){
+                        long rr4 = workerThread.lastEventCheck + 700;
+                        long r66 = java.lang.System.currentTimeMillis();
+                        int tempr3 = (rr4 > r66 ? 1 : (rr4 == r66 ? 0 : -1));
+                        if (tempr3 >= 0){
+                            TimeUnit r666 = TimeUnit.MILLISECONDS;
+                            try {
+                                ptpAction = (PtpAction) ptpCamera.queue.poll(1000, r666);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }
+                }
+
+                if (workerThread.r3 == null){
+                    if (workerThread.r2 == null){
+                        if (workerThread.r1 == null){
+                            workerThread.notifyWorkEnded();
+                            return;
+                        }
+                    }
+                }
+                /*workerThread.r3.close();
+                workerThread.r2.close();
+                workerThread.r1.close();
+*/
+                long rr44 = java.lang.System.currentTimeMillis();
+                workerThread.lastEventCheck = rr44;
+                ptpCamera.queueEventCheck();
+
+
+                if(ptpAction != null)ptpAction.exec(workerThread);
+                PtpAction ptpAction2 = null;
+                if (workerThread.stop == false){
+                    long r44 = workerThread.lastEventCheck + 700;
+                    long r66 = System.currentTimeMillis();
+                    int tempr3 = (r44 > r66 ? 1 : (r44 == r66 ? 0 : -1));
+                    if (tempr3 >= 0){
+
+                        TimeUnit timeUnit = java.util.concurrent.TimeUnit.MILLISECONDS;
+                        try {
+                            ptpAction2 = (PtpAction) ptpCamera.queue.poll(1000, timeUnit);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                PtpAction ptpAction3 = null;
+                if (ptpAction2 == null){
+                    if (workerThread.stop == false){
+                        long r44 = workerThread.lastEventCheck+700;
+                        long r66 = java.lang.System.currentTimeMillis();
+                        int tempr3 = (r44 > r66 ? 1 : (r44 == r66 ? 0 : -1));
+                        if (tempr3 >= 0){
+                            TimeUnit timeUnit = java.util.concurrent.TimeUnit.MILLISECONDS;
+                            try {
+                                ptpAction3 = (PtpAction) ptpCamera.queue.poll(1000, timeUnit);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+
+            }
         }
 
         public void handleCommand(Command command) {

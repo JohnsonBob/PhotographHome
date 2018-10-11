@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
     private List<String> mPermissionList = new ArrayList<>();
     private String[] permissions = new String[]{Manifest.permission.MOUNT_UNMOUNT_FILESYSTEMS,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE,};
+            Manifest.permission.READ_EXTERNAL_STORAGE};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

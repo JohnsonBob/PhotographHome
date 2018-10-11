@@ -254,6 +254,7 @@ public class CameraService extends AlltuuCameraListener {
         this.alertDialog.show();
     }
 
+
     private void showBaseDialog(String msg) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext(), R.style.theme_AppCompat_Light_Dialog_Alert);
         builder.setTitle("温馨提示");
